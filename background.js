@@ -28,7 +28,7 @@ chrome.runtime.onStartup.addListener(setupRefererRule);
 const capturedMp4Urls = new Map();
 
 const INTRO_PATTERN = /\/uniplayer\/intro\.mp4(\?|$)/;
-const MAIN_PATTERN = /\/media_files\/[^/?]+\.mp4(\?|$)/;
+const MAIN_PATTERN = /\/media_files\/(.+?)\.mp4(\?|$)/;
 
 chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
