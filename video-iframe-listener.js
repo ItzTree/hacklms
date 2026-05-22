@@ -35,13 +35,20 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         }
         case "trigger-autoplay": {
             // background webRequest listener가 mp4 패킷을 캡처하도록 재생 버튼 클릭
-            if (!autoPlayAttempted) {
-                document.querySelector('#front-screen > div > div.vc-front-screen-btn-container > div.vc-front-screen-btn-wrapper.video1-btn > div')?.click();
-                autoPlayAttempted = true;
-                sendResponse({ triggered: true });
-            } else {
+            if (autoPlayAttempted) {
                 sendResponse({ triggered: false });
+                break;
             }
+            // front-screen이 숨김/부재이면 이미 재생이 시작된 상태 — click 시 인트로 재시작될 수 있어 skip
+            const frontScreen = document.querySelector('#front-screen');
+            if (!frontScreen || frontScreen.offsetParent === null) {
+                autoPlayAttempted = true;
+                sendResponse({ triggered: false });
+                break;
+            }
+            document.querySelector('#front-screen > div > div.vc-front-screen-btn-container > div.vc-front-screen-btn-wrapper.video1-btn > div')?.click();
+            autoPlayAttempted = true;
+            sendResponse({ triggered: true });
             break;
         }
         case "get-video-playback-rate": {
